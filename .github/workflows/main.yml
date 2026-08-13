@@ -13,10 +13,18 @@ jobs:
               host: ${{ secrets.HOST }}
               username: ubuntu
               key: ${{ secrets.SSH_PRIVATE_KEY }}
+              port: 22
               script: |
-                    cd final_project
+                    set -e
+                    echo "Connected to $(hostname)"
+                    cd /home/ubuntu/final_project/
+                    echo "Pulling latest code..."
                     git pull
+                    echo "building app..."
                     docker build -t final_app .
+                     echo "stopping the app..."
                     docker stop app || true
                     docker rm app || true
+                    echo "running the app"
                     docker run -d -p 8080:80 --name app final_app
+                    echo "deployment completed"
